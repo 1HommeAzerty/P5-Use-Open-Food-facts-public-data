@@ -11,7 +11,7 @@ class Products:
         self.dbconnection = records.Database('mysql+mysqlconnector://root@localhost/bdd_projet5?charset=utf8mb4')
 
     def get_products(self):
-        return self.dbconnection.query("SELECT * FROM products LIMIT 200")
+        return self.dbconnection.query("SELECT * FROM products LIMIT 1")
 
     def get_DE_products(self):
         return self.dbconnection.query("SELECT name, nutriscore FROM products WHERE nutriscore = 'd' OR nutriscore = 'e'")
@@ -24,4 +24,17 @@ class Products:
 
 
     def get_DE_products_by_category(self, category):
-        return self.dbconnection.query("SELECT name, nutriscore FROM products WHERE nutriscore IN ('d','e') AND category = :cat ORDER BY RAND() LIMIT 10", cat = category)
+        return self.dbconnection.query("SELECT name, nutriscore, id FROM products WHERE nutriscore IN ('d','e') AND category = :cat ORDER BY RAND() LIMIT 10", cat = category)
+
+
+    def get_ABC_products_by_category(self, category):
+        return self.dbconnection.query("SELECT name, nutriscore, id FROM products WHERE nutriscore IN ('a','b','c') AND category = :cat ORDER BY RAND() LIMIT 5", cat = category)
+
+    #def get_favourites(self):
+    #    return self.dbconnection.query("SELECT name , nutriscore FROM favorites JOIN products ON products.id = favorite.product_id ")
+
+    def get_product(self, productid):
+        return self.dbconnection.query("SELECT * FROM products WHERE id = :id", id = productid)
+
+    def fill_favorites(self, product_id, substitute_id):
+        return self.dbconnection.query("INSERT INTO favorite (product_id, substitute_id) VALUES (:product_id, :substitute_id)", product_id = product_id, substitute_id = substitute_id)
