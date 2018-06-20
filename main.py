@@ -14,40 +14,59 @@ class Main:
         with open(config, "r") as cfile:
             categories = [cat.strip() for cat in cfile.read().split(",")]
         choices = categories + ["consulter les favoris", "quitter"]
-        choice = self.input(choices, "Quel est votre choix ? ")
-        self.display_products_de(choice)
+        choice = self.input(choices, "Quel est votre choix ? ")  
+        
+        if 0 <= choice < len(categories) :
+            self.display_products_de(choices[choice])
+        elif choice == len(categories):
+            self.display_favorites()
+        else:
+            self.quit()      
 
     def input(self, elements, message):
-
+        """---"""
         while True:
             for i, element in enumerate(elements):
                 print(i+1, element)
             choice = input(message)
             if choice.isdigit():
                 choice = int(choice)
-                if 0 < choice < i:
-                    return elements[choice-1]
+                if 0 < choice <= i+1:
+                    return choice-1
+
 
     def display_products_de(self, category):
         productsde = self.prod.get_DE_products_by_category(category)
-        productsde = [f"{product['name'].decode('utf-8')} ({product['nutriscore'].decode('utf-8')})" for product in productsde.all(as_dict = True)] 
-        choices = productsde + ["consulter les favoris", "quitter"]
+        productchoices = [f"{product['name'].decode('utf-8')} ({product['nutriscore'].decode('utf-8')})" for product in productsde.all(as_dict = True)] 
+        choices = productchoices + ["consulter les favoris", "quitter"]
         choice = self.input(choices, "Quel est votre choix ? ")
-        print(choice)
 
-    def display_products_abc(self):
-        productsabc = self.productsabc
+        if 0 <= choice < len(productsde) :
+            self.display_products_abc(category, productsde[choice]['id'])
+        elif choice == len(productsde):
+            self.display_favorites()
+        else:
+            self.quit()
 
-        for product in productsabc:
-            print(f'{product["name"].decode("utf-8")}\n',
-                f'Nutriscore: {product["nutriscore"].decode("utf-8")}\n')
+    def display_products_abc(self, category, productid):
+        productsabc = self.prod.get_ABC_products_by_category(category)
+        productchoices = [f"{product['name'].decode('utf-8')} ({product['nutriscore'].decode('utf-8')})" for product in productsabc.all(as_dict = True)]
+        choices = productchoices + ["consulter les favoris", "quitter"]
+        choice = self.input(choices, "Quel est votre choix ? ")
+        
+        if 0 <= choice < len(productsabc) :
+            self.display_product(productid, productsabc[choice]['id'])
+        elif choice == len(productsabc):
+            self.display_favorites()
+        else:
+            self.quit()
 
 
-    def display_product(self):
+    def display_product(self, productid, substituteid):
         """---"""
-        stores = self.stores
+        stores = self.prod.get_stores_products()
 
-        products = self.products
+        products = self.prod.get_product(substituteid)
         for product in products:
             print(f'{product["name"].decode("utf-8")}\n',
             f'Nutriscore: {product["nutriscore"].decode("utf-8")}\n',
@@ -56,36 +75,19 @@ class Main:
 
             for store in stores:
                 if store["product_id"] == product["id"]:
-                    print(f'{store["product_id"]}\n',
-                        f'Magasin: {store["name"].decode("utf-8")}\n')
+                    print(f'Magasin: {store["name"].decode("utf-8")}\n')
     
-    def display_stores(self):
-        """---"""
-        stores = self.stores
-        for store in stores:
-            print(f'{store["product_id"]}\n',
-                f'Magasin: {store["name"].decode("utf-8")}\n')
+
+    def display_favorites(self):
+        pass
+    def quit(self):
+        pass
 
 def main():
     """---"""
     inst = Main()
     inst.start('config.txt')
-    #inst.display_product()
-    #inst.display_stores()
-    #inst.display_products_de()
-    #inst.display_products_abc()
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-#def select():
-#   user_search = ""
-#   while user_search == "":
-#        .
