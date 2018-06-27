@@ -13,15 +13,16 @@ class Main:
     def start(self, config):
         with open(config, "r") as cfile:
             categories = [cat.strip() for cat in cfile.read().split(",")]
-        choices = categories + ["consulter les favoris", "quitter"]
-        choice = self.input(choices, "Quel est votre choix ? ")  
+        choices = categories + ["Consulter les favoris", "Quitter"]
+        choice = self.input(choices, "Quel est votre choix ? ")
         
-        if 0 <= choice < len(categories) :
+        #self.cat = choices[choice]
+        if 0 <= choice < len(categories):
             self.display_products_de(choices[choice])
         elif choice == len(categories):
             self.display_favorites()
         else:
-            self.quit()      
+            self.quit()
 
     def input(self, elements, message):
         """---"""
@@ -37,24 +38,31 @@ class Main:
 
     def display_products_de(self, category):
         productsde = self.prod.get_DE_products_by_category(category)
-        productchoices = [f"{product['name'].decode('utf-8')} ({product['nutriscore'].decode('utf-8')})" for product in productsde.all(as_dict = True)] 
-        choices = productchoices + ["consulter les favoris", "quitter"]
+        
+        productchoices = [
+        f"{product['name'].decode('utf-8')} ({product['nutriscore'].decode('utf-8')})" 
+        for product in productsde.all(as_dict = True)]
+
+        choices = productchoices + ["Consulter les favoris","test", "Quitter"]
         choice = self.input(choices, "Quel est votre choix ? ")
 
-        if 0 <= choice < len(productsde) :
+        if 0 <= choice < len(productsde):
             self.display_products_abc(category, productsde[choice]['id'])
         elif choice == len(productsde):
             self.display_favorites()
+        elif choice == (len(productsde)+1):
+            #self.start("config.txt")
+            self.display_products_de(category)
         else:
             self.quit()
 
     def display_products_abc(self, category, productid):
         productsabc = self.prod.get_ABC_products_by_category(category)
         productchoices = [f"{product['name'].decode('utf-8')} ({product['nutriscore'].decode('utf-8')})" for product in productsabc.all(as_dict = True)]
-        choices = productchoices + ["consulter les favoris", "quitter"]
+        choices = productchoices + ["Consulter les favoris", "Quitter"]
         choice = self.input(choices, "Quel est votre choix ? ")
         
-        if 0 <= choice < len(productsabc) :
+        if 0 <= choice < len(productsabc):
             self.display_product(productid, productsabc[choice]['id'])
         elif choice == len(productsabc):
             self.display_favorites()
@@ -76,10 +84,27 @@ class Main:
             for store in stores:
                 if store["product_id"] == product["id"]:
                     print(f'Magasin: {store["name"].decode("utf-8")}\n')
-    
+        choices = ["Ajouter aux favoris", "Consulter les favoris", "Quitter"]
+        choice = self.input(choices, "Quel est votre choix ? ")
+
+        if choice == 0:
+            self.prod.fill_favorites(productid, substituteid)
+        else:
+            self.quit()
 
     def display_favorites(self):
-        pass
+        favorites = self.prod.get_favorites()
+        
+        for favorite in favorites:
+            
+            print(f'{favorite["name"].decode("utf-8")}\n',
+            f'Nutriscore: {favorite["nutriscore"].decode("utf-8")}\n',
+            f'{favorite["sname"].decode("utf-8")}\n',
+            f'Nutriscore: {favorite["sscore"].decode("utf-8")}\n')
+
+            #f'URL: {favorite["url"].decode("utf-8")}\n',
+            #'Barcode: ', favorite['id'])
+
     def quit(self):
         pass
 
