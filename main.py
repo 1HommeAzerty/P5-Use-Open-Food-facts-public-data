@@ -3,7 +3,6 @@
 
 from products import Products
 
-
 class Main:
     def __init__(self):
         self.prod = Products()
@@ -104,6 +103,8 @@ class Main:
             self.prod.fill_favorites(productid, substituteid)
 
             self.start("config.txt")
+        if choice == 1 :
+            self.display_favorites()
         else:
             self.quit()
 

@@ -7,7 +7,7 @@ from products import Products
 
 
 class Installer:
-
+    """---"""
     def __init__(self):
 
         self.prod = Products()
