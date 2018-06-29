@@ -7,14 +7,15 @@ import requests
 
 import pymysql
 
+import config
 
 class Products:
 
     def __init__(self):
         try:
-            self.dbconnection = records.Database('mysql+mysqlconnector://root@localhost/bdd_projet5?charset=utf8mb4')
+            self.dbconnection = records.Database(config.DB_URL)
         except:
-            print("Error")
+            print(config.DB_URL)
 
     def get_stores_from_api(self):
         return requests.get(
