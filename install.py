@@ -1,22 +1,25 @@
 #! F:\OC_tp\Python\P5\env\Scripts\python
 # coding: utf-8
 
-import json
 
-from products import Products
+"""This module gets the data from the API and fills the database"""
+
+from products import ProductsManager
 
 
 class Installer:
-    """---"""
+    """Gets the data from the API and fills the database."""
+
     def __init__(self):
-
-        self.prod = Products()
-
-    def get_stores(self):
-        response = self.prod.get_stores_from_api()
-        return response
+        """Creates an instance of the ProductsManager class to
+        get access to the requests to the API and database.
+        """
+        self.prod = ProductsManager()
 
     def get_products(self, categories, number=1000):
+        """Gets list of products from the API
+        for the categories in config.txt.
+        """
         with open("config.txt", "r") as cfile:
             categories = [cat.strip() for cat in cfile.read().split(",")]
         products_list = []
@@ -36,16 +39,20 @@ class Installer:
         return products_list
 
     def fill_stores(self):
-        data = self.get_stores()
-        #print(data['tags']['id'])
-        for dt in data['tags']:
-            if dt['products'] >= 10:
-                self.prod.fill_stores(dt['name'])
-                print('Table Stores remplie')
+        """Get a list of stores from the API.
+        Fills the stores table with that list.
+        """
+        stores = self.prod.get_stores_from_api()
+        for store in stores['tags']:
+            if store['products'] >= 10:
+                self.prod.fill_stores(store['name'])
+                print(store['name'])
             else:
                 pass
 
     def fill_products(self):
+        """Gets the list of products from get_products()
+        Fills the products and product_store tables"""
         products = self.get_products("config.txt", 1000)
 
         for product in products:
@@ -58,7 +65,7 @@ class Installer:
                             store_id = self.prod.get_store_id(store)
 
                             if len(store_id):
-                                # print(product['product_name'],store, store_id)
+                                print(product['product_name'])
                                 self.prod.fill_products_stores(
                                     store_id[0]['id'], product)
             else:
@@ -66,7 +73,7 @@ class Installer:
 
 
 def main():
-    """---"""
+    """Instantiates Installer and starts filling the tables"""
     inst = Installer()
     inst.fill_stores()
     inst.fill_products()
