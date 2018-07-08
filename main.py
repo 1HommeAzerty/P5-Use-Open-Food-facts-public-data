@@ -1,4 +1,4 @@
-#! F:\OC_tp\Python\P5\env\Scripts\python
+#! /usr/bin/env python3
 # coding: utf-8
 
 
