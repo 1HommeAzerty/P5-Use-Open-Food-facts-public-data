@@ -3,9 +3,9 @@
 
 DB_CONFIG = {
     'host': 'localhost',
-    'dbname': 'ters',
-    'user': 'HuguesC',
-    'password': 'BddOcP5',
+    'dbname': 'your_database_name',
+    'user': 'your_user_name',
+    'password': 'your_password',
     'port': 3306,
     'charset': 'utf8mb4'
 }

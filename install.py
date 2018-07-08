@@ -21,9 +21,11 @@ class Installer:
         for the categories in config.txt.
         """
         with open("config.txt", "r") as cfile:
+            # Gets the categories from the config file
             categories = [cat.strip() for cat in cfile.read().split(",")]
         products_list = []
         for category in categories:
+            # For each category, criteria completes the url in the API request.
             criteria = {
                 'action': 'process',
                 'json': 1,
@@ -44,6 +46,7 @@ class Installer:
         """
         stores = self.prod.get_stores_from_api()
         for store in stores['tags']:
+            # Checks if the store has more than 10 products in db.
             if store['products'] >= 10:
                 self.prod.fill_stores(store['name'])
                 print(store['name'])
@@ -52,11 +55,14 @@ class Installer:
 
     def fill_products(self):
         """Gets the list of products from get_products()
-        Fills the products and product_store tables"""
+        Fills the products and product_store tables.
+        """
         products = self.get_products("config.txt", 1000)
 
         for product in products:
+            # Checks if the product data has stores.
             if 'stores' in product and product['stores'] != "":
+                # Checks if the product data has a nutrition grade.
                 if 'nutrition_grade_fr' in product:
                     if product['nutrition_grade_fr'] != "":
                         self.prod.fill_products(product)
